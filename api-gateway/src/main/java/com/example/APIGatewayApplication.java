@@ -1,5 +1,13 @@
 package com.example;
 
+import java.io.IOException;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -7,7 +15,6 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 public class APIGatewayApplication {
 
@@ -42,8 +49,20 @@ public class APIGatewayApplication {
 
             private void forwardRequest(String baseUrl, HttpServletRequest req, HttpServletResponse resp) throws IOException {
                 String fullPath = baseUrl + req.getRequestURI().replaceFirst(req.getContextPath(), "");
-                // Forward request and handle response
-                // Example using Apache HttpClient or another HTTP client library
+
+                try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+                    HttpGet httpGet = new HttpGet(fullPath);
+                    try (CloseableHttpResponse httpResponse = httpClient.execute(httpGet)) {
+                        int statusCode = httpResponse.getStatusLine().getStatusCode();
+                        resp.setStatus(statusCode);
+
+                        HttpEntity entity = httpResponse.getEntity();
+                        if (entity != null) {
+                            String responseContent = EntityUtils.toString(entity);
+                            resp.getWriter().write(responseContent);
+                        }
+                    }
+                }
             }
         }), "/*");
 
