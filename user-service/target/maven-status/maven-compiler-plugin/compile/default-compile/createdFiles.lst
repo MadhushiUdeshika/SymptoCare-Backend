@@ -1,2 +1,14 @@
 com\example\UserApplication.class
-com\example\UserController.class
+com\example\controller\AuthController.class
+com\example\filters\JwtRequestFilter.class
+com\example\model\Profile.class
+com\example\config\SecurityConfig.class
+com\example\controller\ProfileController.class
+com\example\repository\ProfileRepository.class
+com\example\model\AuthenticationRequest.class
+com\example\service\CustomUserDetailsService.class
+com\example\service\ProfileServiceImpl.class
+com\example\util\JwtUtil.class
+com\example\model\AuthenticationResponse.class
+com\example\service\ProfileService.class
+org\springframework\security\config\annotation\web\configuration\WebSecurityConfigurerAdapter.class
